@@ -1,4 +1,4 @@
-const tasks = [
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [
   {
     title: 'Finish Assignment',
     description: 'Complete the To-Do dashboard assignment',
@@ -53,6 +53,10 @@ function updateStats() {
   completedTasksNum.textContent = completed;
   pendingTasksNum.textContent = pending;
   highPriorityNum.textContent = highPriority;
+}
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function updateProgress() {
@@ -135,7 +139,7 @@ function renderTasks() {
       }
       const movedTask = tasks.splice(draggedIndex, 1)[0];
       tasks.splice(targetIndex, 0, movedTask);
-
+      saveTasks();
       renderTasks();
     });
 
@@ -158,7 +162,7 @@ todoForm.addEventListener('submit', (e) => {
   };
 
   tasks.push(newTask);
-
+  saveTasks();
   todoForm.reset();
 
   renderTasks();
@@ -194,7 +198,7 @@ taskList.addEventListener('click', (e) => {
     task.description = card.querySelector('.edit-desc').value;
     task.priority = card.querySelector('.edit-priority').value;
     task.dueDate = card.querySelector('.edit-date').value;
-
+    saveTasks();
     renderTasks();
   });
 
@@ -205,6 +209,7 @@ taskList.addEventListener('click', (e) => {
   if (e.target.classList.contains('delete-btn')) {
     const { index } = e.target.dataset;
     tasks.splice(index, 1);
+    saveTasks();
     renderTasks();
   }
 });
@@ -213,6 +218,7 @@ taskList.addEventListener('change', (e) => {
   if (e.target.classList.contains('task-check')) {
     const { index } = e.target.dataset;
     tasks[index].completed = e.target.checked;
+    saveTasks();
     renderTasks();
 
     updateStats();
